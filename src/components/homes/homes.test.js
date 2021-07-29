@@ -1,8 +1,8 @@
-import {getAllByLabelText, getAllByRole, getByLabelText, getByTestId, render,act} from '@testing-library/react'
+import {getAllByLabelText, getAllByRole, getByLabelText, getByTestId, render,act, getAllByText} from '@testing-library/react'
 import React from 'react'
-import apiClient from '../services/apiClient';
+import apiClient from '../../services/apiClient';
 import Homes from './homes'
-
+import bookingDialogService from '../../services/bookingDialogService'
 let container = null;
 
 beforeEach(async () => {
@@ -53,4 +53,16 @@ it('should show prices', () => {
 
 it('should show a number in price', () => {
     expect(container).toHaveTextContent("$1/night");
+})
+
+it('should show home booking button', () => {
+  expect(container).toHaveTextContent("Book");
+})
+
+it('should open home booking dialog when clicking the button', () => {
+  jest.spyOn(bookingDialogService, 'open').mockImplementation(() => {})
+  const buttons = getAllByText(container,"Book");
+  buttons[0].click()
+
+  expect(bookingDialogService.open).toHaveBeenCalled()
 })
