@@ -1,8 +1,8 @@
-import { Dialog,DialogContent } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import apiClient from "../../services/apiClient";
 import bookingDialogService from "../../services/bookingDialogService";
-import HomeBooking from "./homeBooking";
+import Notification from "../notification/notification";
+import HomeDialog from "../popup/homeDialog";
 
 const homesDataPromise = Promise.resolve([
   {
@@ -33,21 +33,22 @@ const homesDataPromise = Promise.resolve([
 
 const Homes = () => {
   const [homes, setHomes] = useState([]);
-  const [openBook,setOpenBook] = useState({open:false,data:null})
+  const [openBook, setOpenBook] = useState({ open: false, data: null });
 
   useEffect(() => {
-    const subscription = bookingDialogService.events$.subscribe(state => setOpenBook(state));
+    const subscription = bookingDialogService.events$.subscribe((state) =>
+      setOpenBook(state)
+    );
     const homesDataPromise = apiClient.getHomes();
     homesDataPromise
-    .then((homesData) => {
-      setHomes(homesData);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+      .then((homesData) => {
+        setHomes(homesData);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     return () => subscription.unsubscribe();
   }, []);
-
 
   return (
     <div className={"container m-2"}>
@@ -56,31 +57,45 @@ const Homes = () => {
         {homes.map((x, i) => {
           return (
             <div key={i} className={"col-6 col-md-6 col-lg-4 col-xl-3 mb-3"}>
-              <div key={i+1} aria-label="homes" className={"card w-100"}>
+              <div key={i + 1} aria-label="homes" className={"card w-100"}>
                 <img
                   aria-label="image"
                   src={x.image}
                   alt=""
                   className={"card-img-top"}
-                  key={i+2}
+                  key={i + 2}
                 />
+                <hr style={{margin:1}}/>
                 <div>
-                  <div key={i+3} aria-label="title" className={"card-title h5"}>{x.title}</div>
-                  <div key={i+4} aria-label="location">{x.location}</div>
-                  <div key={i+5} aria-label="price">${x.price}/night</div>
-                  <div className={"d-flex justify-content-end"}>
-                    <button type="button" className="btn btn-primary" onClick={() => bookingDialogService.open(x)}>Book</button>
+                  <div
+                    key={i + 3}
+                    aria-label="title"
+                    className={"card-title h5"}
+                  >
+                    {x.title}
+                  </div>
+                  <div key={i + 4} aria-label="location">
+                    {x.location}
+                  </div>
+                  <div key={i + 5} aria-label="price">
+                    ${x.price}/night
+                  </div>
+                  <div className={"d-flex justify-content-center mb-2"}>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => bookingDialogService.open(x)}
+                    >
+                      Book
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           );
         })}
-        <Dialog open={openBook.open} onClose={() => bookingDialogService.close()} maxWidth={"xs"} fullWidth={true}>
-          <DialogContent>
-            <HomeBooking home={openBook.data}/>
-          </DialogContent>
-        </Dialog>
+        <HomeDialog openBook={openBook}/>
+        <Notification />
       </div>
     </div>
   );
