@@ -1,1 +1,1 @@
-# Course of udemy - Test-Driven Development with React
+# Udemy course - Test-Driven Development with React
