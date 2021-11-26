@@ -1,2 +1,1 @@
-# TDD-React
-TDD-React example
+# Course of udemy - Test-Driven Development with React
